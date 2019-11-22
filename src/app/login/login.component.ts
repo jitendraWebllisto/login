@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, EmailValidator } from '@angular/forms';
 import {ApiService, Config} from '../api.service';
 import { HttpClient } from '@angular/common/http';
 import {Router} from '@angular/router';
@@ -12,10 +12,20 @@ import {Router} from '@angular/router';
 
 export class LoginComponent implements OnInit {
   loginForm:FormGroup;
-  config: { token: any; };
- 
+  public config: Array<any> 
+  submitted = false;
+  myData = ''
+  errorMessage = ""
+  errorDiv:boolean = false;
 
-  constructor(private formBuilder: FormBuilder ,private apiservice:ApiService,public http: HttpClient, private router:Router) { }
+  constructor(
+    private formBuilder: FormBuilder,
+    private apiservice:ApiService,
+    public http: HttpClient,
+    private router:Router
+  ){
+    this.apiservice.getConfig(this.loginForm);
+  }
    
   ngOnInit() {
    this.formInit(); 
@@ -23,7 +33,7 @@ export class LoginComponent implements OnInit {
  
   formInit() {
     this.loginForm = this.formBuilder.group({
-      email: ['', Validators.required],
+      email:    ['', Validators.required],
       password: ['', Validators.required]
   })
     
@@ -32,25 +42,21 @@ export class LoginComponent implements OnInit {
 
 
   onSubmit(){
-    console.log(this.loginForm.value); 
-    // let formData = new FormData();
-    // formData.append('username', this.loginForm.get('name').value);
-    // formData.append('password', this.loginForm.get('email').value);
-    
+    this.submitted = true;
+    this.myData = this.loginForm.value;
+    this.apiservice.getConfig(this.loginForm).subscribe(res => {
+      // console.log(res);
+      if(res){
+        this.router.navigate(['/home']);
+      }
+      error=>{
+        // console.log(error);
+        this.errorDiv = true;
+        this.errorMessage = error.error;
+      }
+      
+    })
 
-    this.http.post<any>('https://testwallet.angelium.net/api/jwt/api-token-auth/', this.loginForm.value)
-      .subscribe(res => {
-        console.log(res);
-      this.router.navigate(["/home"])
-      })
-        
-    // this.apiservice.getConfig()
-    // .subscribe((data: Config) => this.config = {
-    //     token: data['loginUrl'],
-        
-    // });
-        
   }
-
  
 }
