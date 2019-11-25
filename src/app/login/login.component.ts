@@ -3,13 +3,13 @@ import { FormGroup, FormBuilder, Validators, EmailValidator } from '@angular/for
 import {ApiService, Config} from '../api.service';
 import { HttpClient } from '@angular/common/http';
 import {Router} from '@angular/router';
-
+​
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-
+​
 export class LoginComponent implements OnInit {
   loginForm:FormGroup;
   public config: Array<any> 
@@ -17,7 +17,7 @@ export class LoginComponent implements OnInit {
   myData = ''
   errorMessage = ""
   errorDiv:boolean = false;
-
+​
   constructor(
     private formBuilder: FormBuilder,
     private apiservice:ApiService,
@@ -39,24 +39,35 @@ export class LoginComponent implements OnInit {
     
   } 
   get f() { return this.loginForm.controls; }
-
-
+​
+​
   onSubmit(){
     this.submitted = true;
-    this.myData = this.loginForm.value;
-    this.apiservice.getConfig(this.loginForm).subscribe(res => {
+    this.apiservice.getConfig(this.loginForm.value).subscribe(res => {
       // console.log(res);
       if(res){
-        this.router.navigate(['/home']);
+        console.log(res);
+        if(res['token']){
+          this.apiservice.token = res['token'];
+​
+          this.apiservice.getUserDetail();
+​
+          this.router.navigate(['/home']);
+        }
+        
       }
       error=>{
-        // console.log(error);
-        this.errorDiv = true;
-        this.errorMessage = error.error;
+        console.log(error);
       }
       
     })
-
+​
   }
  
 }
+
+
+
+
+
+
