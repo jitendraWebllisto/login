@@ -5,20 +5,31 @@ import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
   providedIn: 'root'
 })
 export class ApiService {
+  
   loginUrl = ' https://testwallet.angelium.net/api/jwt/api-token-auth/';
   userDetailUrl='https://testwallet.angelium.net/api/exchange/trades/';
- token:"";
+  token:"";
+  private userInfo: any= null;
+  // static getToken: any;
   constructor(private http: HttpClient) { }
-private getHeader():any{
+
+  private getHeader():any{
   const httpOptions = {
-    headers: new HttpHeaders ({
+       headers: new HttpHeaders ({
       'Authorization': "JWT "+this.token
-​
     })
   };
   return httpOptions;
 }
-​
+
+// setHeaders() {
+//   let headers = new HttpHeaders();
+//   if (this.userInfo) {
+//     headers = headers.append('Authorization', 'JWT ' + this.userInfo.token);
+//   }
+//   return headers;
+// }
+// ​
 ​
   getConfig(data) {
     return this.http.post<any>(this.loginUrl, data); 
@@ -32,6 +43,13 @@ private getHeader():any{
         console.log("user detail data" + data)
       }
     );
+  }
+  loginIn(){
+    return !! localStorage.getItem ('token')
+  }
+
+  getToken(){
+    return localStorage.getItem('token')
   }
 }
 ​

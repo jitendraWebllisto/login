@@ -48,6 +48,7 @@ export class LoginComponent implements OnInit {
       if(res){
         console.log(res);
         if(res['token']){
+          localStorage.setItem('token',res.token)
           this.apiservice.token = res['token'];
 ​
           this.apiservice.getUserDetail();
